@@ -32,6 +32,7 @@ public class PainelJogo extends JPanel implements Runnable {
     private List<Barreira> barreiras;
     private Projetil projetilJogador;
     private List<Projetil> projeteisInvasores;
+    private Image imagemFundo;
 
     private int pontuacao;
     private int vidas;
@@ -49,6 +50,14 @@ public class PainelJogo extends JPanel implements Runnable {
         setBackground(Color.BLACK);
         setFocusable(true);
         addKeyListener(new TecladoAdapter());
+        
+        try {
+            ImageIcon ii = new ImageIcon(getClass().getResource("/imagens/FundoEspaco.png"));
+            this.imagemFundo = ii.getImage();
+        } catch (Exception e) {
+            System.err.println("Erro ao carregar imagem de fundo: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -80,11 +89,14 @@ public class PainelJogo extends JPanel implements Runnable {
         projetilJogador = null;
         direcaoInvasores = 1;
 
-        int[] pontosPorLinha = {30, 20, 20, 10};
-        for (int linha = 0; linha < 4; linha++) {
+        // Mantém 4 fileiras, substituindo uma de Invasor2.png por Invasor4.png
+        int[] pontosPorLinha = {30, 20, 10, 10};
+        String[] imagensPorLinha = {"Invasor1.png", "Invasor2.png", "Invasor4.png", "Invasor3.png"};
+
+        for (int linha = 0; linha < 4; linha++) { // Volta para 4 fileiras
             for (int col = 0; col < 8; col++) {
                 int yOffset = ((nivel - 1) / 5) * 20;
-                invasores.add(new Invasor(100 + col * 60, 50 + yOffset + linha * 50, pontosPorLinha[linha]));
+                invasores.add(new Invasor(100 + col * 60, 50 + yOffset + linha * 45, pontosPorLinha[linha], imagensPorLinha[linha]));
             }
         }
     }
@@ -184,19 +196,19 @@ public class PainelJogo extends JPanel implements Runnable {
     private void verificarColisoes() {
         // Colisão: projétil do jogador com invasor ou barreira
         if (projetilJogador != null) {
-            boolean alvoRemovido = false; // CORREÇÃO AQUI
+            boolean alvoRemovido = false; 
             // Com invasor
             for (Invasor inv : invasores) {
                 if (inv.isVisivel() && projetilJogador.getBounds().intersects(inv.getBounds())) {
                     inv.setVisivel(false);
                     projetilJogador.setVisivel(false);
                     pontuacao += inv.getPontos();
-                    alvoRemovido = true; // CORREÇÃO AQUI
+                    alvoRemovido = true; 
                     break;
                 }
             }
             // Com barreira
-            if (!alvoRemovido) { // CORREÇÃO AQUI
+            if (!alvoRemovido) { 
                 for (Barreira b : barreiras) {
                     if (b.isVisivel() && projetilJogador.getBounds().intersects(b.getBounds())) {
                         b.setVisivel(false);
@@ -243,6 +255,13 @@ public class PainelJogo extends JPanel implements Runnable {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
+
+        if (imagemFundo != null) {
+            g2d.drawImage(imagemFundo, 0, 0, LARGURA_TELA, ALTURA_TELA, null);
+        } else {
+             g2d.setColor(Color.BLACK);
+             g2d.fillRect(0, 0, LARGURA_TELA, ALTURA_TELA);
+        }
 
         nave.desenhar(g2d);
         if (projetilJogador != null) projetilJogador.desenhar(g2d);
