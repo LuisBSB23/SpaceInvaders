@@ -8,6 +8,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Data Access Object (DAO) para a entidade Jogador.
@@ -51,7 +54,8 @@ public class JogadorDAO {
      * @return Um objeto Jogador se a autenticação for bem-sucedida, caso contrário, null.
      */
     public Jogador loginJogador(String email, String senha) {
-        String sql = "SELECT id, nome, email, hash_senha, pontuacao_maxima FROM jogadores WHERE email = ?";
+        // MODIFICADO: Seleciona as novas colunas de estatísticas
+        String sql = "SELECT id, nome, email, hash_senha, pontuacao_maxima, partidas_jogadas, inimigos_destruidos FROM jogadores WHERE email = ?";
         
         try (Connection conexao = ConexaoBD.obterConexao();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
@@ -66,7 +70,10 @@ public class JogadorDAO {
                     int id = rs.getInt("id");
                     String nome = rs.getString("nome");
                     int pontuacaoMaxima = rs.getInt("pontuacao_maxima");
-                    return new Jogador(id, nome, email, pontuacaoMaxima);
+                    int partidasJogadas = rs.getInt("partidas_jogadas");
+                    int inimigosDestruidos = rs.getInt("inimigos_destruidos");
+                    // MODIFICADO: Retorna jogador com todas as estatísticas
+                    return new Jogador(id, nome, email, pontuacaoMaxima, partidasJogadas, inimigosDestruidos);
                 }
             }
         } catch (SQLException e) {
@@ -98,5 +105,43 @@ public class JogadorDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    // NOVO: Método para atualizar estatísticas de partidas e inimigos
+    public void atualizarEstatisticas(int idJogador, int inimigosDestruidos) {
+        String sql = "UPDATE jogadores SET partidas_jogadas = partidas_jogadas + 1, inimigos_destruidos = inimigos_destruidos + ? WHERE id = ?";
+         try (Connection conexao = ConexaoBD.obterConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            
+            stmt.setInt(1, inimigosDestruidos);
+            stmt.setInt(2, idJogador);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // NOVO: Método para buscar os 10 melhores jogadores
+    public List<Jogador> getTopDezJogadores() {
+        List<Jogador> jogadores = new ArrayList<>();
+        String sql = "SELECT nome, pontuacao_maxima FROM jogadores ORDER BY pontuacao_maxima DESC LIMIT 10";
+
+        try (Connection conexao = ConexaoBD.obterConexao();
+             Statement stmt = conexao.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                String nome = rs.getString("nome");
+                int pontuacaoMaxima = rs.getInt("pontuacao_maxima");
+                // Usando um construtor simplificado para a lista de recordes
+                Jogador j = new Jogador(0, nome, "", pontuacaoMaxima, 0, 0);
+                jogadores.add(j);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return jogadores;
     }
 }

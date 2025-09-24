@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import com.spaceinvaders.dao.JogadorDAO;
 import com.spaceinvaders.modelo.Jogador;
+import com.spaceinvaders.util.FonteUtil;
 
 import java.awt.*;
 
@@ -20,65 +21,104 @@ public class TelaCadastro extends JFrame {
         this.telaDeOrigem = telaDeOrigem;
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(400, 300);
+        setSize(450, 400);
         setLocationRelativeTo(null);
-        setLayout(new GridBagLayout());
         setResizable(false);
 
+        // --- NOVO LAYOUT ---
+        JPanel painelFundo = new JPanel(new GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                ImageIcon ii = new ImageIcon(getClass().getResource("/imagens/FundoEspaco.png"));
+                g.drawImage(ii.getImage(), 0, 0, getWidth(), getHeight(), null);
+            }
+        };
+        setContentPane(painelFundo);
+        
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
+        Font fonteTitulo = FonteUtil.getFonte(28f);
+        Font fonteTexto = FonteUtil.getFonte(14f);
+        
         JLabel labelTitulo = new JLabel("CRIAR CONTA", SwingConstants.CENTER);
-        labelTitulo.setFont(new Font("Arial", Font.BOLD, 24));
+        labelTitulo.setFont(fonteTitulo);
+        labelTitulo.setForeground(Color.YELLOW);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        add(labelTitulo, gbc);
+        painelFundo.add(labelTitulo, gbc);
 
         gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.LINE_END;
+
+        JLabel labelNome = new JLabel("Nome:");
+        labelNome.setFont(fonteTexto);
+        labelNome.setForeground(Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 1;
-        add(new JLabel("Nome:"), gbc);
+        painelFundo.add(labelNome, gbc);
 
-        campoNome = new JTextField(20);
+        campoNome = new JTextField(15);
+        campoNome.setFont(fonteTexto);
         gbc.gridx = 1;
         gbc.gridy = 1;
-        add(campoNome, gbc);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        painelFundo.add(campoNome, gbc);
 
+        JLabel labelEmail = new JLabel("Email:");
+        labelEmail.setFont(fonteTexto);
+        labelEmail.setForeground(Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 2;
-        add(new JLabel("Email:"), gbc);
+        gbc.anchor = GridBagConstraints.LINE_END;
+        painelFundo.add(labelEmail, gbc);
 
-        campoEmail = new JTextField(20);
+        campoEmail = new JTextField(15);
+        campoEmail.setFont(fonteTexto);
         gbc.gridx = 1;
         gbc.gridy = 2;
-        add(campoEmail, gbc);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        painelFundo.add(campoEmail, gbc);
 
+        JLabel labelSenha = new JLabel("Senha:");
+        labelSenha.setFont(fonteTexto);
+        labelSenha.setForeground(Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 3;
-        add(new JLabel("Senha:"), gbc);
+        gbc.anchor = GridBagConstraints.LINE_END;
+        painelFundo.add(labelSenha, gbc);
 
-        campoSenha = new JPasswordField(20);
+        campoSenha = new JPasswordField(15);
+        campoSenha.setFont(fonteTexto);
         gbc.gridx = 1;
         gbc.gridy = 3;
-        add(campoSenha, gbc);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        painelFundo.add(campoSenha, gbc);
+        
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        painelBotoes.setOpaque(false);
 
         JButton botaoCadastrar = new JButton("Cadastrar");
+        botaoCadastrar.setFont(fonteTexto);
+        
+        JButton botaoVoltar = new JButton("Voltar");
+        botaoVoltar.setFont(fonteTexto);
+        
+        painelBotoes.add(botaoCadastrar);
+        painelBotoes.add(botaoVoltar);
+        
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        add(botaoCadastrar, gbc);
-        
-        JButton botaoVoltar = new JButton("Voltar para Login");
-        gbc.gridy = 5;
-        add(botaoVoltar, gbc);
+        painelFundo.add(painelBotoes, gbc);
 
         botaoCadastrar.addActionListener(e -> registrar());
         botaoVoltar.addActionListener(e -> voltarParaLogin());
 
-        // Garante que a tela de login reapareça se esta for fechada
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -97,7 +137,6 @@ public class TelaCadastro extends JFrame {
             return;
         }
 
-        // Simples validação de email
         if (!email.contains("@") || !email.contains(".")) {
              JOptionPane.showMessageDialog(this, "Por favor, insira um email válido.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;

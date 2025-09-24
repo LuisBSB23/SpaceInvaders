@@ -11,13 +11,18 @@ public class Jogador {
     private String email;
     private String senha; // Usada apenas para cadastro, não é armazenada diretamente
     private int pontuacaoMaxima;
+    // --- NOVOS ATRIBUTOS ---
+    private int partidasJogadas;
+    private int inimigosDestruidos;
 
-    // Construtor usado para carregar dados do banco
-    public Jogador(int id, String nome, String email, int pontuacaoMaxima) {
+    // Construtor completo para carregar dados do banco
+    public Jogador(int id, String nome, String email, int pontuacaoMaxima, int partidasJogadas, int inimigosDestruidos) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.pontuacaoMaxima = pontuacaoMaxima;
+        this.partidasJogadas = partidasJogadas;
+        this.inimigosDestruidos = inimigosDestruidos;
     }
     
     // Construtor usado para registrar um novo jogador
@@ -25,6 +30,10 @@ public class Jogador {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
+        // Valores padrão para novos jogadores
+        this.pontuacaoMaxima = 0;
+        this.partidasJogadas = 0;
+        this.inimigosDestruidos = 0;
     }
 
     // Getters e Setters
@@ -66,5 +75,22 @@ public class Jogador {
 
     public void setPontuacaoMaxima(int pontuacaoMaxima) {
         this.pontuacaoMaxima = pontuacaoMaxima;
+    }
+    
+    // --- NOVOS GETTERS E SETTERS ---
+    public int getPartidasJogadas() {
+        return partidasJogadas;
+    }
+
+    public void setPartidasJogadas(int partidasJogadas) {
+        this.partidasJogadas = partidasJogadas;
+    }
+
+    public int getInimigosDestruidos() {
+        return inimigosDestruidos;
+    }
+
+    public void setInimigosDestruidos(int inimigosDestruidos) {
+        this.inimigosDestruidos = inimigosDestruidos;
     }
 }
