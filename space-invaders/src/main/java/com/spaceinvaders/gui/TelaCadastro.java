@@ -142,6 +142,12 @@ public class TelaCadastro extends JFrame {
             return;
         }
 
+        // VERIFICA SE O EMAIL JÁ EXISTE ANTES DE TENTAR REGISTRAR
+        if (jogadorDAO.emailJaExiste(email)) {
+            JOptionPane.showMessageDialog(this, "Este email já está cadastrado. Tente outro.", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         Jogador novoJogador = new Jogador(nome, email, senha);
         boolean sucesso = jogadorDAO.registrarJogador(novoJogador);
 
@@ -149,7 +155,7 @@ public class TelaCadastro extends JFrame {
             JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso! Faça o login para jogar.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             voltarParaLogin();
         } else {
-            JOptionPane.showMessageDialog(this, "Erro ao cadastrar. O email já pode estar em uso.", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Ocorreu um erro inesperado ao realizar o cadastro.", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
         }
     }
 

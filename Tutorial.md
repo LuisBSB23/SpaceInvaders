@@ -10,7 +10,7 @@ Siga estes passos para garantir que o jogo execute corretamente no seu ambiente 
 
 ## Pré-requisitos
 Visual Studio Code: O projeto é configurado para ser executado facilmente no VS Code.
-Java Extension Pack: Essencial para compilar e executar projetos Java. Instale a extensão "Extension Pack for Java" da Microsoft.
+Java Extension Pack: Essencial para compilar e executar projetos Java. Instale a extensão "Extension Pack for Java" da Microsoft. (Será necessario reabrir o repositório ou reiniciar o VSCODE caso não tenha a extensão instalada para reconhecer os pacotes)
 MySQL: É necessário ter o MySQL instalado. Você pode usar uma ferramenta como o MySQL Workbench para gerenciar o banco de dados.
 
 ## Passo 1: Configurar o Banco de Dados
@@ -26,7 +26,7 @@ Abra o arquivo: space-invaders/src/main/java/com/spaceinvaders/dao/ConexaoBD.jav
 Localize e altere as seguintes constantes com as suas credenciais do MySQL:
 
 private static final String USUARIO = "root"; // <-- Altere para seu usuário
-private static final String SENHA = "samyi23s11";   // <-- Altere para sua senha
+private static final String SENHA = "sua-senha";   // <-- Altere para sua senha
 
 Obs: Se o seu MySQL roda em uma porta diferente da padrão (3306), você também pode alterar a constante PORTA.
 

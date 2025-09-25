@@ -19,6 +19,32 @@ import java.util.List;
 public class JogadorDAO {
 
     /**
+     * Verifica se um email já existe no banco de dados.
+     * @param email O email a ser verificado.
+     * @return true se o email já existir, false caso contrário.
+     */
+    public boolean emailJaExiste(String email) {
+        String sql = "SELECT COUNT(*) FROM jogadores WHERE email = ?";
+        try (Connection conexao = ConexaoBD.obterConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Em caso de erro, é mais seguro assumir que o e-mail já existe
+            // para evitar uma inserção inválida.
+            return true; 
+        }
+        return false;
+    }
+
+    /**
      * Registra um novo jogador no banco de dados.
      * A senha é criptografada usando jBCrypt antes de ser armazenada.
      * @param jogador O objeto Jogador contendo nome, email e senha em texto plano.
@@ -41,7 +67,8 @@ public class JogadorDAO {
             return linhasAfetadas > 0;
 
         } catch (SQLException e) {
-            // Um erro de violação de chave única (email duplicado) pode ocorrer aqui.
+            // Este bloco agora serve como uma segurança para outras falhas de inserção,
+            // já que a verificação de e-mail duplicado é feita antes.
             e.printStackTrace();
             return false;
         }

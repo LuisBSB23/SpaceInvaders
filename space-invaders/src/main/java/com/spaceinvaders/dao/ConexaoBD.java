@@ -14,7 +14,7 @@ public class ConexaoBD {
     private static final int PORTA = 3306; // <-- Altere aqui se usar uma porta diferente
     private static final String DATABASE = "space_invaders_db";
     private static final String USUARIO = "root"; // <-- Altere para seu usuário
-    private static final String SENHA = "samyi23s11";   // <-- Altere para sua senha
+    private static final String SENHA = "sua-senha";   // <-- Altere para sua senha
 
     // URL de conexão montada a partir das constantes
     private static final String URL = String.format("jdbc:mysql://%s:%d/%s?useSSL=false&serverTimezone=UTC", 
