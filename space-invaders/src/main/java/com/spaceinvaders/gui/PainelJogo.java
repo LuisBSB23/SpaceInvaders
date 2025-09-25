@@ -160,7 +160,6 @@ public class PainelJogo extends JPanel implements Runnable {
         repaint();
     }
     
-    // --- LÓGICA DE ATUALIZAÇÃO PRINCIPAL DIVIDIDA ---
     private void atualizar() {
         if (vidas <= 0) {
             finalizarJogo();
@@ -183,7 +182,6 @@ public class PainelJogo extends JPanel implements Runnable {
     }
     
     private void atualizarInvasores() {
-        // --- DIFICULDADE DINÂMICA ---
         long invasoresRestantes = invasores.stream().filter(Invasor::isVisivel).count();
         float fatorVelocidade = 1.0f + ( (invasores.size() - invasoresRestantes) * 0.05f);
         float velocidadeHorizontal = (1.0f + (nivel * 0.2f)) * fatorVelocidade;
@@ -264,7 +262,6 @@ public class PainelJogo extends JPanel implements Runnable {
 
         Rectangle projBounds = projetilJogador.getBounds();
 
-        // Com invasores
         for (Invasor inv : invasores) {
             if (inv.isVisivel() && projBounds.intersects(inv.getBounds())) {
                 inv.setVisivel(false);
@@ -275,11 +272,10 @@ public class PainelJogo extends JPanel implements Runnable {
                 if (projetilJogador.getTipo() != Projetil.TipoProjetil.FORTE) {
                     projetilJogador.setVisivel(false);
                 }
-                return; // Projétil some ou continua
+                return; 
             }
         }
         
-        // Com chefe
         if (boss != null && boss.isVisivel() && projBounds.intersects(boss.getBounds())) {
             boss.levarDano(projetilJogador.getTipo() == Projetil.TipoProjetil.FORTE ? 3 : 1);
              SomUtil.tocarSom("explosao.wav");
@@ -290,7 +286,6 @@ public class PainelJogo extends JPanel implements Runnable {
             return;
         }
 
-        // Com barreiras
         for (Barreira b : barreiras) {
             if (b.isVisivel() && projBounds.intersects(b.getBounds())) {
                 b.setVisivel(false);
@@ -303,12 +298,11 @@ public class PainelJogo extends JPanel implements Runnable {
     private void colisaoProjeteisInvasores() {
         Rectangle naveBounds = new Rectangle(nave.getX(), nave.getY(), Nave.LARGURA, Nave.ALTURA);
         for (Projetil p : projeteisInvasores) {
-            if (p.isVisivel()) {
-                // Com a nave
+            if (p != null && p.isVisivel()) {
                 if (p.getBounds().intersects(naveBounds)) {
                     p.setVisivel(false);
                     if (nave.temEscudo()) {
-                        nave.ativarEscudo(); // Apenas reinicia o timer
+                        nave.ativarEscudo();
                     } else {
                         vidas--;
                         SomUtil.tocarSom("dano.wav");
@@ -316,7 +310,6 @@ public class PainelJogo extends JPanel implements Runnable {
                     }
                     continue;
                 }
-                // Com barreiras
                 for (Barreira b : barreiras) {
                     if (b.isVisivel() && p.getBounds().intersects(b.getBounds())) {
                         p.setVisivel(false);
@@ -382,7 +375,6 @@ public class PainelJogo extends JPanel implements Runnable {
              g2d.fillRect(0, 0, LARGURA_TELA, ALTURA_TELA);
         }
         
-        // --- FEEDBACK VISUAL DE DANO ---
         if (System.currentTimeMillis() - tempoDanoJogador < DURACAO_FLASH_DANO) {
             g2d.setColor(new Color(255, 0, 0, 100));
             g2d.fillRect(0, 0, LARGURA_TELA, ALTURA_TELA);
@@ -391,10 +383,30 @@ public class PainelJogo extends JPanel implements Runnable {
         if (estadoAtual != EstadoJogo.FIM_DE_JOGO) {
             nave.desenhar(g2d);
             if (projetilJogador != null) projetilJogador.desenhar(g2d);
-            projeteisInvasores.forEach(p -> p.desenhar(g2d));
-            invasores.forEach(inv -> inv.desenhar(g2d));
-            barreiras.forEach(b -> b.desenhar(g2d));
-            powerUps.forEach(pu -> pu.desenhar(g2d));
+            
+            // --- CORREÇÃO DO ERRO NullPointerException ---
+            // Iterar sobre uma cópia da lista para evitar problemas de concorrência
+            for (Projetil p : new ArrayList<>(projeteisInvasores)) {
+                if (p != null) {
+                    p.desenhar(g2d);
+                }
+            }
+            for (Invasor inv : new ArrayList<>(invasores)) {
+                 if (inv != null) {
+                    inv.desenhar(g2d);
+                }
+            }
+            for (Barreira b : new ArrayList<>(barreiras)) {
+                 if (b != null) {
+                    b.desenhar(g2d);
+                }
+            }
+            for (PowerUp pu : new ArrayList<>(powerUps)) {
+                 if (pu != null) {
+                    pu.desenhar(g2d);
+                }
+            }
+
             if (boss != null) boss.desenhar(g2d);
         }
 
@@ -410,10 +422,21 @@ public class PainelJogo extends JPanel implements Runnable {
     private void desenharHUD(Graphics2D g) {
         g.setColor(Color.WHITE);
         g.setFont(FonteUtil.getFonte(16f));
-        g.drawString("Pontuação: " + pontuacao, 10, 20);
-        g.drawString("Vidas: " + vidas, LARGURA_TELA - 100, 20);
-        g.drawString("Nível: " + nivel, LARGURA_TELA / 2 - 100, 20);
-        g.drawString("Recorde: " + Math.max(jogador.getPontuacaoMaxima(), pontuacao), LARGURA_TELA / 2 + 20, 20);
+        FontMetrics fm = g.getFontMetrics();
+        int yPos = 30;
+
+        g.drawString("Pontuação: " + pontuacao, 10, yPos);
+
+        String nivelStr = "Nível: " + nivel;
+        int nivelWidth = fm.stringWidth(nivelStr);
+        g.drawString(nivelStr, (LARGURA_TELA - nivelWidth) / 2, yPos);
+        
+        String vidasStr = "Vidas: " + vidas;
+        int vidasWidth = fm.stringWidth(vidasStr);
+        g.drawString(vidasStr, LARGURA_TELA - vidasWidth - 10, yPos);
+
+        String recordeStr = "Recorde: " + Math.max(jogador.getPontuacaoMaxima(), pontuacao);
+        g.drawString(recordeStr, 10, yPos + 25);
     }
     
     private void desenharTelaPausa(Graphics2D g) {
@@ -486,3 +509,4 @@ public class PainelJogo extends JPanel implements Runnable {
         }
     }
 }
+

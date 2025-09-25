@@ -54,7 +54,6 @@ public class JogadorDAO {
      * @return Um objeto Jogador se a autenticação for bem-sucedida, caso contrário, null.
      */
     public Jogador loginJogador(String email, String senha) {
-        // MODIFICADO: Seleciona as novas colunas de estatísticas
         String sql = "SELECT id, nome, email, hash_senha, pontuacao_maxima, partidas_jogadas, inimigos_destruidos FROM jogadores WHERE email = ?";
         
         try (Connection conexao = ConexaoBD.obterConexao();
@@ -72,14 +71,12 @@ public class JogadorDAO {
                     int pontuacaoMaxima = rs.getInt("pontuacao_maxima");
                     int partidasJogadas = rs.getInt("partidas_jogadas");
                     int inimigosDestruidos = rs.getInt("inimigos_destruidos");
-                    // MODIFICADO: Retorna jogador com todas as estatísticas
                     return new Jogador(id, nome, email, pontuacaoMaxima, partidasJogadas, inimigosDestruidos);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        // Retorna null se o email não for encontrado ou a senha estiver incorreta.
         return null;
     }
 
@@ -90,7 +87,6 @@ public class JogadorDAO {
      * @param novaPontuacao A pontuação obtida na partida.
      */
     public void atualizarPontuacaoMaxima(int idJogador, int novaPontuacao) {
-        // A cláusula WHERE garante que a atualização só ocorra se a nova pontuação for maior.
         String sql = "UPDATE jogadores SET pontuacao_maxima = ? WHERE id = ? AND pontuacao_maxima < ?";
         
         try (Connection conexao = ConexaoBD.obterConexao();
@@ -107,7 +103,6 @@ public class JogadorDAO {
         }
     }
     
-    // NOVO: Método para atualizar estatísticas de partidas e inimigos
     public void atualizarEstatisticas(int idJogador, int inimigosDestruidos) {
         String sql = "UPDATE jogadores SET partidas_jogadas = partidas_jogadas + 1, inimigos_destruidos = inimigos_destruidos + ? WHERE id = ?";
          try (Connection conexao = ConexaoBD.obterConexao();
@@ -122,10 +117,10 @@ public class JogadorDAO {
         }
     }
 
-    // NOVO: Método para buscar os 10 melhores jogadores
+    // --- AJUSTE 2: BUSCAR MAIS DADOS NA QUERY ---
     public List<Jogador> getTopDezJogadores() {
         List<Jogador> jogadores = new ArrayList<>();
-        String sql = "SELECT nome, pontuacao_maxima FROM jogadores ORDER BY pontuacao_maxima DESC LIMIT 10";
+        String sql = "SELECT nome, pontuacao_maxima, partidas_jogadas, inimigos_destruidos FROM jogadores ORDER BY pontuacao_maxima DESC LIMIT 10";
 
         try (Connection conexao = ConexaoBD.obterConexao();
              Statement stmt = conexao.createStatement();
@@ -134,8 +129,10 @@ public class JogadorDAO {
             while (rs.next()) {
                 String nome = rs.getString("nome");
                 int pontuacaoMaxima = rs.getInt("pontuacao_maxima");
-                // Usando um construtor simplificado para a lista de recordes
-                Jogador j = new Jogador(0, nome, "", pontuacaoMaxima, 0, 0);
+                int partidasJogadas = rs.getInt("partidas_jogadas");
+                int inimigosDestruidos = rs.getInt("inimigos_destruidos");
+                
+                Jogador j = new Jogador(0, nome, "", pontuacaoMaxima, partidasJogadas, inimigosDestruidos);
                 jogadores.add(j);
             }
 

@@ -22,7 +22,7 @@ public class TelaLogin extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         
-        // --- NOVO LAYOUT ---
+        // Painel de fundo com imagem
         JPanel painelFundo = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -34,24 +34,28 @@ public class TelaLogin extends JFrame {
         setContentPane(painelFundo);
         
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
         
-        Font fonteTitulo = FonteUtil.getFonte(40f);
+        // --- AJUSTE 1: TAMANHO DA FONTE DO TÍTULO ---
+        Font fonteTitulo = FonteUtil.getFonte(38f); // Reduzido de 40f para 38f
         Font fonteTexto = FonteUtil.getFonte(14f);
 
+        // Adicionado mais espaçamento e centralizado
         JLabel labelTitulo = new JLabel("SPACE INVADERS", SwingConstants.CENTER);
         labelTitulo.setFont(fonteTitulo);
         labelTitulo.setForeground(Color.YELLOW);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        gbc.insets = new Insets(20, 10, 20, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(20, 10, 30, 10); // Aumentada a margem inferior
         painelFundo.add(labelTitulo, gbc);
         
-        gbc.insets = new Insets(5, 10, 5, 10);
+        // Resetando e ajustando constraints para os campos
         gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.insets = new Insets(10, 10, 10, 10);
 
+        // Email Label
+        gbc.anchor = GridBagConstraints.LINE_END;
         JLabel labelEmail = new JLabel("Email:");
         labelEmail.setFont(fonteTexto);
         labelEmail.setForeground(Color.WHITE);
@@ -59,35 +63,47 @@ public class TelaLogin extends JFrame {
         gbc.gridy = 1;
         painelFundo.add(labelEmail, gbc);
 
+        // Email Field
         campoEmail = new JTextField(15);
         campoEmail.setFont(fonteTexto);
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
         painelFundo.add(campoEmail, gbc);
 
+        // Senha Label
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.LINE_END;
         JLabel labelSenha = new JLabel("Senha:");
         labelSenha.setFont(fonteTexto);
         labelSenha.setForeground(Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.LINE_END;
         painelFundo.add(labelSenha, gbc);
 
+        // Senha Field
         campoSenha = new JPasswordField(15);
         campoSenha.setFont(fonteTexto);
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
         painelFundo.add(campoSenha, gbc);
-
+        
+        // Resetando constraints para os botões
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
         gbc.gridx = 0;
-        gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.NONE;
         
         // --- PAINEL DE BOTÕES ---
+        gbc.gridy = 3;
+        gbc.insets = new Insets(20, 10, 5, 10); // Mais margem superior
         JPanel painelBotoesLogin = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         painelBotoesLogin.setOpaque(false);
         JButton botaoLogin = new JButton("Login");
@@ -99,7 +115,7 @@ public class TelaLogin extends JFrame {
         painelFundo.add(painelBotoesLogin, gbc);
         
         gbc.gridy = 4;
-        gbc.insets = new Insets(15, 10, 5, 10);
+        gbc.insets = new Insets(15, 10, 15, 10);
         JButton botaoRecordes = new JButton("Recordes");
         botaoRecordes.setFont(fonteTexto);
         painelFundo.add(botaoRecordes, gbc);
@@ -128,7 +144,6 @@ public class TelaLogin extends JFrame {
         }
     }
     
-    // --- NOVO MENU PRINCIPAL APÓS LOGIN ---
     private void abrirMenuPrincipal(Jogador jogador) {
         JFrame menuFrame = new JFrame("Space Invaders - Menu");
         menuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -203,3 +218,4 @@ public class TelaLogin extends JFrame {
         this.setVisible(false);
     }
 }
+

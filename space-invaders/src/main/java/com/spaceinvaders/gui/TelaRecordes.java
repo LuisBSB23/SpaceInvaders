@@ -14,7 +14,8 @@ public class TelaRecordes extends JFrame {
     public TelaRecordes(JFrame telaDeOrigem) {
         super("Space Invaders - Recordes");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(500, 400);
+        // --- AJUSTE 2: TAMANHO DA JANELA ---
+        setSize(750, 450); // Aumentado para caber as novas colunas
         setLocationRelativeTo(null);
         setResizable(false);
         
@@ -36,7 +37,8 @@ public class TelaRecordes extends JFrame {
         labelTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         painel.add(labelTitulo, BorderLayout.NORTH);
 
-        String[] colunas = {"Posição", "Nome", "Pontuação Máxima"};
+        // --- AJUSTE 2: NOVAS COLUNAS ---
+        String[] colunas = {"Posição", "Nome", "Pontuação", "Partidas", "Inimigos"};
         DefaultTableModel model = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -56,7 +58,14 @@ public class TelaRecordes extends JFrame {
 
         int pos = 1;
         for (Jogador jogador : topJogadores) {
-            model.addRow(new Object[]{pos + "º", jogador.getNome(), jogador.getPontuacaoMaxima()});
+            // --- AJUSTE 2: ADICIONANDO NOVOS DADOS NA LINHA ---
+            model.addRow(new Object[]{
+                pos + "º", 
+                jogador.getNome(), 
+                jogador.getPontuacaoMaxima(), 
+                jogador.getPartidasJogadas(), 
+                jogador.getInimigosDestruidos()
+            });
             pos++;
         }
 

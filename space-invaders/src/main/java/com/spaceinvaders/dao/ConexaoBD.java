@@ -9,10 +9,16 @@ import java.sql.SQLException;
  */
 public class ConexaoBD {
 
-    // Altere as credenciais abaixo para corresponder à sua configuração local do MySQL.
-    private static final String URL = "jdbc:mysql://localhost:3306/space_invaders_db?useSSL=false&serverTimezone=UTC";
+    // --- AJUSTE 4: CONSTANTES PARA FACILITAR A CONFIGURAÇÃO ---
+    private static final String HOST = "localhost";
+    private static final int PORTA = 3306; // <-- Altere aqui se usar uma porta diferente
+    private static final String DATABASE = "space_invaders_db";
     private static final String USUARIO = "root"; // <-- Altere para seu usuário
     private static final String SENHA = "samyi23s11";   // <-- Altere para sua senha
+
+    // URL de conexão montada a partir das constantes
+    private static final String URL = String.format("jdbc:mysql://%s:%d/%s?useSSL=false&serverTimezone=UTC", 
+                                                    HOST, PORTA, DATABASE);
 
     /**
      * Obtém uma conexão com o banco de dados.
