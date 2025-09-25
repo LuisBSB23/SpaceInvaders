@@ -12,8 +12,8 @@ public class TelaPerfil extends JFrame {
         super("Space Invaders - Perfil");
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        // --- AJUSTE 3: TAMANHO DA JANELA ---
-        setSize(500, 400); // Aumentado a largura e altura
+        // --- AJUSTE 3: TAMANHO DA JANELA E FONTE ---
+        setSize(600, 450); // Aumentado a largura para caber todo o texto
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -31,7 +31,7 @@ public class TelaPerfil extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         
         Font fonteTitulo = FonteUtil.getFonte(28f);
-        Font fonteTexto = FonteUtil.getFonte(16f);
+        Font fonteTexto = FonteUtil.getFonte(14f); // Reduzido o tamanho para melhor encaixe
         
         // --- AJUSTE 3: LAYOUT ---
         // Título centralizado
@@ -39,13 +39,15 @@ public class TelaPerfil extends JFrame {
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(10, 10, 20, 10); // Margem inferior maior para o título
         JLabel labelTitulo = new JLabel("PERFIL", SwingConstants.CENTER);
         labelTitulo.setFont(fonteTitulo);
         labelTitulo.setForeground(Color.YELLOW);
         painel.add(labelTitulo, gbc);
         
-        // Resetando para layout em duas colunas
+        // Resetando para layout em duas colunas e margens padrão
         gbc.gridwidth = 1;
+        gbc.insets = new Insets(10, 10, 10, 10);
 
         // Linha Nome
         gbc.gridy = 1;

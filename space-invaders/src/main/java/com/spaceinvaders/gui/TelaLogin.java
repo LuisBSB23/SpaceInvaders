@@ -36,7 +36,7 @@ public class TelaLogin extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         
         // --- AJUSTE 1: TAMANHO DA FONTE DO TÍTULO ---
-        Font fonteTitulo = FonteUtil.getFonte(38f); // Reduzido de 40f para 38f
+        Font fonteTitulo = FonteUtil.getFonte(30f); // Reduzido para que o título caiba na janela
         Font fonteTexto = FonteUtil.getFonte(14f);
 
         // Adicionado mais espaçamento e centralizado
@@ -218,4 +218,3 @@ public class TelaLogin extends JFrame {
         this.setVisible(false);
     }
 }
-
